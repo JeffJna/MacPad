@@ -1,0 +1,31 @@
+# Publishes a release when a version tag is pushed (git tag v0.3.0 && git push origin v0.3.0):
+# the universal Mac app as a disk image and a zip, which the "Download for Mac" button of
+# the web page (docs/index.html) points to. The version comes from the tag.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app and disk image
+        run: make dist APP_VERSION="${GITHUB_REF_NAME#v}"
+      - name: Check the app bundle
+        run: |
+          lipo -archs build/MacPad.app/Contents/MacOS/MacPad
+          codesign --verify --deep --strict build/MacPad.app
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" "build/MacPad-$version.dmg" "build/MacPad-$version.zip" \
+            --title "MacPad $version" \
+            --notes "Open the disk image and drag MacPad to Applications. MacPad is not notarized by Apple: the first time, open System Settings > Privacy & Security and click Open Anyway. For iPhone and iPad, build the app with Xcode as the README explains."

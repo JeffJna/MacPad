@@ -35,7 +35,9 @@ Você precisa do Xcode e de um Apple ID. Um Apple ID gratuito basta.
 3. Selecione o projeto **MacPad**, o alvo **MacPad**, depois **Signing & Capabilities**, e
    escolha seu time (com Apple ID gratuito: *Seu Nome (Personal Team)*). Se o Xcode
    disser que o identificador não está disponível, troque por um seu, como
-   `com.seunome.macpad`.
+   `com.seunome.macpad`. Para o time não se perder quando o projeto for gerado de novo
+   (`make ios-project`), coloque-o em `ios/Local.xcconfig`, como explica
+   `ios/Signing.xcconfig`.
 4. Conecte o iPhone com o cabo, escolha-o no topo da janela do Xcode e clique em **Run**
    (⌘R).
 5. Na primeira vez, o iPhone pede para ativar o **Modo de Desenvolvedor** (Ajustes >
@@ -62,6 +64,8 @@ em Run de novo para renovar. Com uma conta paga do Apple Developer, dura um ano.
 
 **No Mac**
 
+- iCloud Drive: documentos novos ficam em iCloud Drive › MacPad e os documentos do iCloud
+  Drive se salvam sozinhos, para o iPhone e o iPad terem tudo (veja abaixo).
 - Abas nativas; sair não pergunta se quer salvar, porque tudo, incluindo o texto não
   salvo, volta na próxima abertura (dá para desligar em Settings).
 - Buscar e substituir com expressões regulares, Find All e Find in Files em uma pasta.
@@ -83,6 +87,31 @@ em Run de novo para renovar. Com uma conta paga do Apple Developer, dura um ano.
 
 Ainda não existem no iOS: macros, Find in Files, autocompletar e escolha de fonte.
 
+## Os mesmos documentos no Mac e no iPhone
+
+O MacPad usa o iCloud Drive para isso, o que funciona com Apple ID gratuito. O iCloud Drive
+precisa estar ligado no Mac (Ajustes do Sistema > seu nome > iCloud) e no iPhone ou iPad.
+
+- **No Mac**, *Sync with iCloud Drive* vem ligado em Settings > General. Um documento novo
+  vira um arquivo em **iCloud Drive › MacPad** uns dois segundos depois que você para de
+  digitar (`new 1.txt`, `new 2.py`, …; File > Rename… dá um nome a ele). Todo documento
+  que está no iCloud Drive é salvo assim, e mais uma vez ao sair, então não há o que
+  salvar à mão. File > Open from iCloud… (⇧⌘O) mostra essa pasta.
+- **No iPhone ou iPad**, abra o MacPad, escolha **Browse > iCloud Drive > MacPad** (a
+  interface do app é em inglês) e abra o documento. Lá o MacPad também salva sozinho.
+- Uma alteração chega ao outro aparelho quando o iCloud a sincroniza, em geral de segundos
+  a um minuto. Um documento aberto a mostra sozinho. No Mac, se você também tiver
+  alterações não salvas, o MacPad pergunta qual versão manter.
+- Se o mesmo documento for alterado nos dois aparelhos antes de o iCloud sincronizar, as
+  duas versões são mantidas: a janela mostra uma e a outra é salva ao lado como
+  `nome (aparelho).ext`. Quando o iPhone só tem acesso ao próprio arquivo, essa cópia vai
+  para No Meu iPhone › MacPad. O MacPad diz onde a cópia ficou.
+- Arquivos em outros lugares do Mac são salvos à mão, como sempre. Para ter um deles no
+  iPhone, use File > Move To… e escolha iCloud Drive › MacPad.
+
+Os ajustes (tema, fonte, tabulação) são de cada aparelho. Handoff e ajustes compartilhados
+pelo iCloud exigiriam a conta paga do Apple Developer Program, por isso o MacPad não os usa.
+
 ## Compilar e testar
 
 ```bash
@@ -94,12 +123,21 @@ make ios            # compila o app de iOS para o simulador
 make ios-test       # roda os testes do iOS no simulador
 ```
 
+## Página e versões publicadas
+
+`docs/index.html` é a página do projeto, em inglês e português. O GitHub Pages a publica
+a partir da pasta `docs` da `main` (Settings > Pages > Deploy from a branch > `main` /
+`/docs`). O botão "Baixar para Mac" aponta para a última release, que o
+`.github/workflows/release.yml` cria quando uma tag de versão é enviada
+(`git tag v0.2.0` e `git push origin v0.2.0`).
+
 ## Onde o MacPad guarda seus dados
 
 | O quê | Onde |
 |---|---|
 | Configurações (Mac) | `~/Library/Preferences/dev.macpad.editor.plist` |
 | Sessão e backups do texto não salvo (Mac) | `~/Library/Application Support/dev.macpad.editor/` |
+| Documentos do Mac e do iPhone | iCloud Drive › MacPad |
 | Documentos (iOS) | onde você os guardar no app Arquivos; a pasta do app é *No Meu iPhone > MacPad* |
 
 ## Licença

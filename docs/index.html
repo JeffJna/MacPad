@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MacPad — text and code editor for Mac, iPhone and iPad</title>
+<meta name="description" content="A fast, native text and code editor for Mac, iPhone and iPad. About 100 languages highlighted, the same themes on every device, and your documents in iCloud Drive. Free and open source.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MacPad">
+<meta property="og:description" content="A fast, native text and code editor for Mac, iPhone and iPad. Free and open source.">
+<meta property="og:image" content="screenshots/editor-light.png">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<script>
+// The language: the visitor's choice, or Portuguese for browsers set to it, otherwise English.
+(function () {
+	var lang = null;
+	try { lang = localStorage.getItem('macpad-lang'); } catch (e) {}
+	if (lang !== 'en' && lang !== 'pt')
+		lang = /^pt\b/i.test(navigator.language || '') ? 'pt' : 'en';
+	document.documentElement.setAttribute('data-lang', lang);
+	document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+})();
+</script>
+<style>
+:root {
+	--bg: #ffffff;
+	--bg-alt: #f5f6f8;
+	--card: #ffffff;
+	--text: #1d1d1f;
+	--muted: #63666e;
+	--line: #e1e3e8;
+	--accent: #2563d9;
+	--accent-hover: #1d50b5;
+	--accent-text: #ffffff;
+	--accent-soft: #e9f0fd;
+	--code-bg: #f1f3f6;
+	--kbd-bg: #ffffff;
+	--shadow: 0 24px 60px rgba(17, 27, 45, .16), 0 4px 14px rgba(17, 27, 45, .08);
+	--blue: #3d7bf2;
+	--purple: #9457eb;
+	--green: #2f9e57;
+	--orange: #ea8423;
+	--red: #dc4559;
+	--gray: #8c93a0;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg: #0e1014;
+		--bg-alt: #15181e;
+		--card: #181b22;
+		--text: #f1f2f4;
+		--muted: #a0a4ad;
+		--line: #282c35;
+		--accent: #5b95ff;
+		--accent-hover: #7aa9ff;
+		--accent-text: #0b1220;
+		--accent-soft: #19253d;
+		--code-bg: #1d2129;
+		--kbd-bg: #22262f;
+		--shadow: 0 24px 60px rgba(0, 0, 0, .55), 0 4px 14px rgba(0, 0, 0, .35);
+	}
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+	font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; height: auto; display: block; }
+picture { display: block; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code, kbd, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+code { font-size: .88em; background: var(--code-bg); padding: .1em .35em; border-radius: 5px; }
+
+/* One language at a time: every text comes in English and Portuguese. */
+body [lang="pt-BR"] { display: none; }
+:root[data-lang="pt"] body [lang="pt-BR"] { display: revert; }
+:root[data-lang="pt"] body [lang="en"] { display: none; }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+@media (max-width: 480px) { .wrap { padding: 0 16px; } }
+
+/* Header */
+header {
+	position: sticky; top: 0; z-index: 10;
+	background: color-mix(in srgb, var(--bg) 82%, transparent);
+	-webkit-backdrop-filter: saturate(180%) blur(16px);
+	backdrop-filter: saturate(180%) blur(16px);
+	border-bottom: 1px solid var(--line);
+}
+.bar { display: flex; align-items: center; gap: 24px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; font-size: 18px; color: var(--text); }
+.brand:hover { text-decoration: none; }
+.brand img { width: 30px; height: 30px; }
+.nav { display: flex; gap: 22px; margin-left: auto; font-size: 15px; }
+.nav a { color: var(--muted); }
+.nav a:hover { color: var(--text); text-decoration: none; }
+.langs { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+.langs button {
+	font: inherit; font-size: 13px; font-weight: 600; letter-spacing: .02em;
+	padding: 4px 10px; border: 0; background: transparent; color: var(--muted); cursor: pointer;
+}
+.langs button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+@media (max-width: 760px) {
+	.nav { display: none; }
+	.langs { margin-left: auto; }
+}
+
+/* Hero */
+.hero { padding: 72px 0 40px; text-align: center; overflow: hidden; }
+.hero h1 {
+	margin: 0 auto; max-width: 15em;
+	font-size: clamp(34px, 6vw, 58px); line-height: 1.07; letter-spacing: -.025em; font-weight: 750;
+}
+.hero .lead { margin: 20px auto 0; max-width: 34em; font-size: clamp(17px, 2.2vw, 20px); color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+.button {
+	display: inline-flex; align-items: center; gap: 8px;
+	padding: 12px 22px; border-radius: 12px; font-weight: 600; font-size: 16px;
+	border: 1px solid var(--line); color: var(--text); background: var(--card);
+}
+.button:hover { text-decoration: none; border-color: var(--muted); }
+.button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.button svg { width: 18px; height: 18px; }
+.fine { margin-top: 14px; font-size: 14px; color: var(--muted); }
+
+.shots { position: relative; max-width: 900px; margin: 56px auto 0; padding: 0 8% 7% 0; }
+.mac { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--card); }
+.phone {
+	position: absolute; right: 0; bottom: 0; width: 23%;
+	border: 6px solid #15171b; border-radius: 30px; overflow: hidden;
+	box-shadow: var(--shadow); background: #000;
+}
+@media (max-width: 600px) { .phone { width: 30%; border-width: 4px; border-radius: 18px; } }
+
+/* Sections */
+section { padding: 88px 0; }
+section.alt { background: var(--bg-alt); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.eyebrow { font-size: 14px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0 0 10px; }
+h2 { margin: 0; font-size: clamp(28px, 4vw, 40px); line-height: 1.12; letter-spacing: -.02em; font-weight: 720; }
+.intro { max-width: 40em; margin: 14px 0 0; color: var(--muted); font-size: 18px; }
+h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.01em; }
+
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
+@media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+.card p { margin: 0; color: var(--muted); font-size: 16px; }
+/* The coloured lines of the app icon, one per card. */
+.tick { display: flex; gap: 5px; margin-bottom: 16px; }
+.tick i { display: block; height: 6px; border-radius: 3px; }
+.tick i:first-child { width: 26px; }
+.tick i:last-child { width: 12px; opacity: .45; }
+
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; margin-top: 8px; }
+.split.reverse .media { order: -1; }
+@media (max-width: 860px) {
+	.split { grid-template-columns: 1fr; gap: 36px; }
+	.split.reverse .media { order: 0; }
+}
+.list { list-style: none; margin: 28px 0 0; padding: 0; display: grid; gap: 16px; }
+.list li { position: relative; padding-left: 30px; }
+.list li::before {
+	content: ""; position: absolute; left: 0; top: .45em;
+	width: 16px; height: 6px; border-radius: 3px; background: var(--accent);
+}
+.list li:nth-child(5n+2)::before { background: var(--purple); }
+.list li:nth-child(5n+3)::before { background: var(--green); }
+.list li:nth-child(5n+4)::before { background: var(--orange); }
+.list li:nth-child(5n+5)::before { background: var(--red); }
+.media .window { width: fit-content; max-width: 100%; margin: 0 auto; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); }
+.media .handset {
+	width: min(300px, 70%); margin: 0 auto;
+	border: 7px solid #15171b; border-radius: 40px; overflow: hidden; box-shadow: var(--shadow); background: #000;
+}
+
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; counter-reset: step; }
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+.steps .card { position: relative; padding-top: 64px; }
+.steps .card::before {
+	counter-increment: step; content: counter(step);
+	position: absolute; top: 22px; left: 24px;
+	width: 30px; height: 30px; border-radius: 50%;
+	display: grid; place-items: center;
+	background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: 15px;
+}
+.note { margin-top: 28px; font-size: 15px; color: var(--muted); max-width: 46em; }
+
+/* Shortcuts */
+.keys { margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 48px; }
+@media (max-width: 760px) { .keys { grid-template-columns: 1fr; } }
+.keys div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+.keys span:first-child { color: var(--text); }
+.keys span:last-child { white-space: nowrap; color: var(--muted); }
+kbd {
+	display: inline-block; min-width: 1.6em; padding: 1px 6px; text-align: center;
+	font-size: 14px; color: var(--text); background: var(--kbd-bg);
+	border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px;
+}
+
+/* Install */
+.install { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 44px; }
+/* Grid items may shrink below their content: long commands scroll inside their box instead. */
+.grid > *, .steps > *, .split > *, .install > * { min-width: 0; }
+@media (max-width: 860px) { .install { grid-template-columns: 1fr; } }
+.install .card p { color: var(--text); }
+.install ol { margin: 14px 0 0; padding-left: 22px; display: grid; gap: 10px; }
+.install .card .muted { color: var(--muted); font-size: 15px; margin-top: 16px; }
+pre {
+	margin: 12px 0 0; padding: 14px 16px; overflow-x: auto;
+	background: var(--code-bg); border-radius: 10px; font-size: 14px; line-height: 1.6;
+}
+
+footer { padding: 48px 0 64px; font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); }
+footer .links { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 18px; font-size: 15px; }
+footer p { margin: 6px 0; max-width: 52em; }
+</style>
+</head>
+<body>
+
+<header>
+	<div class="wrap bar">
+		<a class="brand" href="#top"><img src="icon.png" alt="" width="30" height="30">MacPad</a>
+		<nav class="nav" aria-label="Sections">
+			<a href="#features"><span lang="en">Features</span><span lang="pt-BR">Recursos</span></a>
+			<a href="#icloud">iCloud Drive</a>
+			<a href="#shortcuts"><span lang="en">Shortcuts</span><span lang="pt-BR">Atalhos</span></a>
+			<a href="#install"><span lang="en">Install</span><span lang="pt-BR">Instalar</span></a>
+			<a href="https://github.com/JeffJna/MacPad">GitHub</a>
+		</nav>
+		<div class="langs" role="group" aria-label="Language">
+			<button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+			<button type="button" data-set-lang="pt" aria-pressed="false">PT</button>
+		</div>
+	</div>
+</header>
+
+<main id="top">
+
+<div class="hero">
+	<div class="wrap">
+		<h1>
+			<span lang="en">A fast, native editor for text and code.</span>
+			<span lang="pt-BR">Um editor de texto e código nativo e rápido.</span>
+		</h1>
+		<p class="lead">
+			<span lang="en">For Mac, iPhone and iPad. About 100 languages highlighted, the same themes on every device, and your documents in iCloud Drive. Free and open source.</span>
+			<span lang="pt-BR">Para Mac, iPhone e iPad. Realce para cerca de 100 linguagens, os mesmos temas em todos os aparelhos e seus documentos no iCloud Drive. Livre e de código aberto.</span>
+		</p>
+		<div class="actions">
+			<a class="button primary" href="https://github.com/JeffJna/MacPad/releases/latest">
+				<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12"/></svg>
+				<span lang="en">Download for Mac</span><span lang="pt-BR">Baixar para Mac</span>
+			</a>
+			<a class="button" href="https://github.com/JeffJna/MacPad">
+				<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 6l-4 4 4 4M13 6l4 4-4 4"/></svg>
+				<span lang="en">Source on GitHub</span><span lang="pt-BR">Código no GitHub</span>
+			</a>
+		</div>
+		<p class="fine">
+			<span lang="en">macOS 11 or later · iPhone and iPad with iOS 16 or later · GPL v3</span>
+			<span lang="pt-BR">macOS 11 ou posterior · iPhone e iPad com iOS 16 ou posterior · GPL v3</span>
+		</p>
+
+		<div class="shots">
+			<picture class="mac">
+				<source srcset="screenshots/editor-dark.png" media="(prefers-color-scheme: dark)">
+				<img src="screenshots/editor-light.png" width="960" height="712" alt="MacPad on the Mac, editing C++ code with syntax colours, line numbers and code folding">
+			</picture>
+			<picture class="phone">
+				<source srcset="screenshots/ios-markdown-dark.png" media="(prefers-color-scheme: dark)">
+				<img src="screenshots/ios-editor.png" width="460" height="1000" alt="MacPad on the iPhone, editing a Python file">
+			</picture>
+		</div>
+	</div>
+</div>
+
+<section id="features" class="alt">
+	<div class="wrap">
+		<p class="eyebrow"><span lang="en">On every device</span><span lang="pt-BR">Em todos os aparelhos</span></p>
+		<h2><span lang="en">One editor, the same on the Mac and in your pocket.</span><span lang="pt-BR">Um editor, igual no Mac e no bolso.</span></h2>
+		<p class="intro">
+			<span lang="en">Both apps colour text with the same engine and themes, so a file looks the same wherever you open it.</span>
+			<span lang="pt-BR">Os dois apps colorem o texto com o mesmo motor e os mesmos temas, então um arquivo fica igual onde quer que você o abra.</span>
+		</p>
+		<div class="grid">
+			<div class="card">
+				<div class="tick"><i style="background:var(--blue)"></i><i style="background:var(--blue)"></i></div>
+				<h3><span lang="en">About 100 languages</span><span lang="pt-BR">Cerca de 100 linguagens</span></h3>
+				<p><span lang="en">Picked from the extension, the file name (<code>Makefile</code>, <code>.zshrc</code>) or the first line (<code>#!/usr/bin/env python3</code>).</span><span lang="pt-BR">Escolhida pela extensão, pelo nome do arquivo (<code>Makefile</code>, <code>.zshrc</code>) ou pela primeira linha (<code>#!/usr/bin/env python3</code>).</span></p>
+			</div>
+			<div class="card">
+				<div class="tick"><i style="background:var(--purple)"></i><i style="background:var(--purple)"></i></div>
+				<h3><span lang="en">10 themes</span><span lang="pt-BR">10 temas</span></h3>
+				<p><span lang="en">Light, Dark, Paper, Ocean, Midnight, two with high contrast and more, or Automatic, which follows the system's appearance.</span><span lang="pt-BR">Light, Dark, Paper, Ocean, Midnight, dois de alto contraste e outros, ou Automatic, que segue a aparência do sistema.</span></p>
+			</div>
+			<div class="card">
+				<div class="tick"><i style="background:var(--green)"></i><i style="background:var(--green)"></i></div>
+				<h3><span lang="en">Every common encoding</span><span lang="pt-BR">Todas as codificações comuns</span></h3>
+				<p><span lang="en">UTF-8, UTF-16 and older code pages are detected by themselves, and CR LF, LF and CR line endings are kept. A character an encoding cannot store is never dropped silently.</span><span lang="pt-BR">UTF-8, UTF-16 e páginas de código antigas são detectadas sozinhas, e os finais de linha CR LF, LF e CR são mantidos. Um caractere que a codificação não comporta nunca some calado.</span></p>
+			</div>
+			<div class="card">
+				<div class="tick"><i style="background:var(--orange)"></i><i style="background:var(--orange)"></i></div>
+				<h3><span lang="en">Tools for lines and text</span><span lang="pt-BR">Ferramentas de linhas e texto</span></h3>
+				<p><span lang="en">Sort, reverse, remove duplicates and empty lines, trim spaces, toggle comments; change case, MD5 and SHA, Base64, URL encoding, format and minify JSON.</span><span lang="pt-BR">Ordenar, inverter, remover duplicadas e vazias, aparar espaços, comentar; maiúsculas e minúsculas, MD5 e SHA, Base64, URL, formatar e minificar JSON.</span></p>
+			</div>
+			<div class="card">
+				<div class="tick"><i style="background:var(--red)"></i><i style="background:var(--red)"></i></div>
+				<h3><span lang="en">Help while typing</span><span lang="pt-BR">Ajuda ao digitar</span></h3>
+				<p><span lang="en">Auto-indentation, and brackets and quotes that close themselves in source code.</span><span lang="pt-BR">Autoindentação, e parênteses e aspas que fecham sozinhos em código-fonte.</span></p>
+			</div>
+			<div class="card">
+				<div class="tick"><i style="background:var(--gray)"></i><i style="background:var(--gray)"></i></div>
+				<h3><span lang="en">Yours alone</span><span lang="pt-BR">Só seu</span></h3>
+				<p><span lang="en">No account, no tracking, no ads. MacPad sends nothing anywhere: your files stay where you keep them.</span><span lang="pt-BR">Sem conta, sem rastreamento, sem anúncios. O MacPad não envia nada a lugar nenhum: seus arquivos ficam onde você os guarda.</span></p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="wrap split">
+		<div>
+			<p class="eyebrow"><span lang="en">On the Mac</span><span lang="pt-BR">No Mac</span></p>
+			<h2><span lang="en">Made for the Mac, and it never loses your work.</span><span lang="pt-BR">Feito para o Mac, e nunca perde seu trabalho.</span></h2>
+			<ul class="list">
+				<li><span lang="en">Native window tabs, menus, dark mode and the usual macOS shortcuts.</span><span lang="pt-BR">Abas nativas, menus, modo escuro e os atalhos de sempre do macOS.</span></li>
+				<li><span lang="en">Quitting never asks to save: every document, unsaved text included, is back at the next launch.</span><span lang="pt-BR">Sair nunca pergunta se quer salvar: todo documento, até o texto não salvo, volta na próxima abertura.</span></li>
+				<li><span lang="en">Find and Replace with regular expressions, Find All, and Find in Files across a folder.</span><span lang="pt-BR">Buscar e substituir com expressões regulares, Find All e busca em todos os arquivos de uma pasta.</span></li>
+				<li><span lang="en">Multiple and column selections, auto-completion, and macros you record and play back.</span><span lang="pt-BR">Seleção múltipla e em coluna, autocompletar e macros que você grava e repete.</span></li>
+				<li><span lang="en">Code folding, bookmarks, change history in the margin and brace matching.</span><span lang="pt-BR">Dobra de código, marcadores, histórico de alterações na margem e realce de pares.</span></li>
+			</ul>
+		</div>
+		<div class="media">
+			<div class="window"><img src="screenshots/find-panel.png" width="600" height="408" alt="The Find and Replace panel of MacPad on the Mac" loading="lazy"></div>
+		</div>
+	</div>
+</section>
+
+<section class="alt">
+	<div class="wrap split reverse">
+		<div>
+			<p class="eyebrow"><span lang="en">On iPhone and iPad</span><span lang="pt-BR">No iPhone e no iPad</span></p>
+			<h2><span lang="en">Real code editing, with a keyboard made for it.</span><span lang="pt-BR">Edição de código de verdade, com um teclado feito para isso.</span></h2>
+			<ul class="list">
+				<li><span lang="en">Opens, creates and renames files in Files: iCloud Drive, On My iPhone or any other provider.</span><span lang="pt-BR">Abre, cria e renomeia arquivos no app Arquivos: iCloud Drive, No Meu iPhone ou qualquer outro provedor.</span></li>
+				<li><span lang="en">A row of coding keys above the keyboard: Tab, arrows, brackets, quotes, undo and redo.</span><span lang="pt-BR">Uma fileira de teclas de programação acima do teclado: Tab, setas, chaves, aspas, desfazer e refazer.</span></li>
+				<li><span lang="en">Line numbers, and a status line with line, column, language, encoding and line ending.</span><span lang="pt-BR">Números de linha e uma linha de status com linha, coluna, linguagem, codificação e final de linha.</span></li>
+				<li><span lang="en">Saves by itself; the last document is open again when you come back.</span><span lang="pt-BR">Salva sozinho; o último documento está aberto quando você volta.</span></li>
+				<li><span lang="en">The system's Find and Replace, Go to Line, and with a hardware keyboard the shortcuts you know.</span><span lang="pt-BR">Buscar e substituir do sistema, Ir para a linha e, com teclado físico, os atalhos que você já conhece.</span></li>
+			</ul>
+		</div>
+		<div class="media">
+			<picture class="handset">
+				<source srcset="screenshots/ios-markdown-dark.png" media="(prefers-color-scheme: dark)">
+				<img src="screenshots/ios-editor.png" width="460" height="1000" alt="MacPad on the iPhone" loading="lazy">
+			</picture>
+		</div>
+	</div>
+</section>
+
+<section id="icloud">
+	<div class="wrap">
+		<p class="eyebrow">iCloud Drive</p>
+		<h2><span lang="en">The same documents on the Mac and the iPhone.</span><span lang="pt-BR">Os mesmos documentos no Mac e no iPhone.</span></h2>
+		<p class="intro">
+			<span lang="en">Through iCloud Drive, with nothing to set up and no account but your Apple ID.</span>
+			<span lang="pt-BR">Pelo iCloud Drive, sem nada para configurar e sem outra conta além do seu Apple ID.</span>
+		</p>
+		<div class="steps">
+			<div class="card">
+				<h3><span lang="en">Write on the Mac</span><span lang="pt-BR">Escreva no Mac</span></h3>
+				<p><span lang="en">A new document becomes a file in iCloud Drive › MacPad a couple of seconds after you stop typing. Documents there save themselves.</span><span lang="pt-BR">Um documento novo vira um arquivo em iCloud Drive › MacPad uns dois segundos depois que você para de digitar. Os documentos de lá se salvam sozinhos.</span></p>
+			</div>
+			<div class="card">
+				<h3><span lang="en">Open it on the iPhone</span><span lang="pt-BR">Abra no iPhone</span></h3>
+				<p><span lang="en">In MacPad, choose Browse › iCloud Drive › MacPad. A change shows on the other device as soon as iCloud has synced it.</span><span lang="pt-BR">No MacPad, escolha Browse › iCloud Drive › MacPad. Uma alteração aparece no outro aparelho assim que o iCloud a sincroniza.</span></p>
+			</div>
+			<div class="card">
+				<h3><span lang="en">Nothing lost</span><span lang="pt-BR">Nada se perde</span></h3>
+				<p><span lang="en">Changed on both devices before iCloud synced? Both versions are kept: one stays open, the other is saved beside it as <code>name (device).ext</code>.</span><span lang="pt-BR">Alterou nos dois aparelhos antes de o iCloud sincronizar? As duas versões ficam: uma continua aberta e a outra é salva ao lado como <code>nome (aparelho).ext</code>.</span></p>
+			</div>
+		</div>
+		<p class="note">
+			<span lang="en">iCloud Drive needs to be on, on both devices. Settings such as the theme and the font are kept per device.</span>
+			<span lang="pt-BR">O iCloud Drive precisa estar ligado nos dois aparelhos. Ajustes como tema e fonte ficam em cada aparelho.</span>
+		</p>
+	</div>
+</section>
+
+<section id="shortcuts" class="alt">
+	<div class="wrap">
+		<p class="eyebrow"><span lang="en">Keyboard</span><span lang="pt-BR">Teclado</span></p>
+		<h2><span lang="en">Shortcuts on the Mac</span><span lang="pt-BR">Atalhos no Mac</span></h2>
+		<div class="keys">
+			<div><span><span lang="en">Find / Replace</span><span lang="pt-BR">Buscar / Substituir</span></span><span><kbd>⌘F</kbd> <kbd>⌥⌘F</kbd></span></div>
+			<div><span><span lang="en">Find next / previous</span><span lang="pt-BR">Buscar próximo / anterior</span></span><span><kbd>⌘G</kbd> <kbd>⇧⌘G</kbd></span></div>
+			<div><span><span lang="en">Find in Files</span><span lang="pt-BR">Buscar em arquivos</span></span><span><kbd>⇧⌘F</kbd></span></div>
+			<div><span><span lang="en">Select next / all occurrences</span><span lang="pt-BR">Selecionar próxima / todas as ocorrências</span></span><span><kbd>⌥⌘E</kbd> <kbd>⌃⌘G</kbd></span></div>
+			<div><span><span lang="en">Go to line</span><span lang="pt-BR">Ir para a linha</span></span><span><kbd>⌘L</kbd></span></div>
+			<div><span><span lang="en">Go to matching brace</span><span lang="pt-BR">Ir para o par da chave</span></span><span><kbd>⌘B</kbd></span></div>
+			<div><span><span lang="en">Complete word</span><span lang="pt-BR">Completar palavra</span></span><span><kbd>⌃Space</kbd></span></div>
+			<div><span><span lang="en">Duplicate / delete line</span><span lang="pt-BR">Duplicar / apagar linha</span></span><span><kbd>⌘D</kbd> <kbd>⇧⌘K</kbd></span></div>
+			<div><span><span lang="en">Move line up / down</span><span lang="pt-BR">Mover linha para cima / baixo</span></span><span><kbd>⌥⌘↑</kbd> <kbd>⌥⌘↓</kbd></span></div>
+			<div><span><span lang="en">Join lines</span><span lang="pt-BR">Juntar linhas</span></span><span><kbd>⌃⌘J</kbd></span></div>
+			<div><span><span lang="en">Toggle line / block comment</span><span lang="pt-BR">Comentar linha / bloco</span></span><span><kbd>⌘/</kbd> <kbd>⌥⌘/</kbd></span></div>
+			<div><span><span lang="en">UPPERCASE / lowercase</span><span lang="pt-BR">MAIÚSCULAS / minúsculas</span></span><span><kbd>⇧⌘U</kbd> <kbd>⌘U</kbd></span></div>
+			<div><span><span lang="en">Fold / unfold</span><span lang="pt-BR">Dobrar / desdobrar</span></span><span><kbd>⌥⌘←</kbd> <kbd>⌥⌘→</kbd></span></div>
+			<div><span><span lang="en">Toggle / next bookmark</span><span lang="pt-BR">Marcador / próximo marcador</span></span><span><kbd>⌘F2</kbd> <kbd>F2</kbd></span></div>
+			<div><span><span lang="en">Record / play a macro</span><span lang="pt-BR">Gravar / repetir macro</span></span><span><kbd>⌃⌘R</kbd> <kbd>⌃⌘P</kbd></span></div>
+			<div><span><span lang="en">Open from iCloud Drive</span><span lang="pt-BR">Abrir do iCloud Drive</span></span><span><kbd>⇧⌘O</kbd></span></div>
+			<div><span><span lang="en">Zoom in / out / reset</span><span lang="pt-BR">Aumentar / diminuir / restaurar</span></span><span><kbd>⌘=</kbd> <kbd>⌘-</kbd> <kbd>⌘0</kbd></span></div>
+			<div><span><span lang="en">Save all / close all</span><span lang="pt-BR">Salvar tudo / fechar tudo</span></span><span><kbd>⌥⌘S</kbd> <kbd>⌥⌘W</kbd></span></div>
+		</div>
+	</div>
+</section>
+
+<section id="install">
+	<div class="wrap">
+		<p class="eyebrow"><span lang="en">Install</span><span lang="pt-BR">Instalar</span></p>
+		<h2><span lang="en">Get MacPad</span><span lang="pt-BR">Tenha o MacPad</span></h2>
+		<div class="install">
+			<div class="card">
+				<h3>Mac</h3>
+				<ol>
+					<li><span lang="en">Download MacPad from <a href="https://github.com/JeffJna/MacPad/releases/latest">Releases</a> and drag it to Applications.</span><span lang="pt-BR">Baixe o MacPad em <a href="https://github.com/JeffJna/MacPad/releases/latest">Releases</a> e arraste-o para Aplicativos.</span></li>
+					<li><span lang="en">The first time, macOS says it cannot check MacPad, which is not notarized by Apple. Open System Settings › Privacy &amp; Security and click <b>Open Anyway</b>. Only once.</span><span lang="pt-BR">Na primeira vez, o macOS diz que não consegue verificar o MacPad, que não é notarizado pela Apple. Abra Ajustes do Sistema › Privacidade e Segurança e clique em <b>Abrir Mesmo Assim</b>. Só uma vez.</span></li>
+				</ol>
+				<p class="muted"><span lang="en">Or build it yourself with the Xcode command line tools:</span><span lang="pt-BR">Ou compile você mesmo com as ferramentas de linha de comando do Xcode:</span></p>
+				<pre><code>xcode-select --install
+git clone https://github.com/JeffJna/MacPad.git
+cd MacPad &amp;&amp; make install</code></pre>
+			</div>
+			<div class="card">
+				<h3>iPhone &amp; iPad</h3>
+				<p><span lang="en">MacPad is not on the App Store: you build it on a Mac with Xcode, and a free Apple ID is enough.</span><span lang="pt-BR">O MacPad não está na App Store: você o compila num Mac com o Xcode, e um Apple ID gratuito basta.</span></p>
+				<ol>
+					<li><span lang="en">Open <code>ios/MacPad.xcodeproj</code> in Xcode.</span><span lang="pt-BR">Abra <code>ios/MacPad.xcodeproj</code> no Xcode.</span></li>
+					<li><span lang="en">In Signing &amp; Capabilities, choose your team (<i>Your Name (Personal Team)</i>).</span><span lang="pt-BR">Em Signing &amp; Capabilities, escolha seu time (<i>Seu Nome (Personal Team)</i>).</span></li>
+					<li><span lang="en">Connect the iPhone, choose it at the top of the window and press Run (<kbd>⌘R</kbd>).</span><span lang="pt-BR">Conecte o iPhone, escolha-o no topo da janela e clique em Run (<kbd>⌘R</kbd>).</span></li>
+					<li><span lang="en">On the iPhone, turn on Developer Mode and trust your certificate when it asks.</span><span lang="pt-BR">No iPhone, ative o Modo de Desenvolvedor e confie no seu certificado quando ele pedir.</span></li>
+				</ol>
+				<p class="muted"><span lang="en">With a free Apple ID the app runs for 7 days; press Run again to renew it.</span><span lang="pt-BR">Com Apple ID gratuito o app funciona por 7 dias; clique em Run de novo para renovar.</span></p>
+			</div>
+		</div>
+	</div>
+</section>
+
+</main>
+
+<footer>
+	<div class="wrap">
+		<div class="links">
+			<a href="https://github.com/JeffJna/MacPad"><span lang="en">Source code</span><span lang="pt-BR">Código-fonte</span></a>
+			<a href="https://github.com/JeffJna/MacPad/releases">Releases</a>
+			<a href="https://github.com/JeffJna/MacPad/blob/main/LICENSE"><span lang="en">License</span><span lang="pt-BR">Licença</span></a>
+		</div>
+		<p><span lang="en">MacPad is free software, released under the GNU General Public License, version 3 or later. It is built with <a href="https://www.scintilla.org/">Scintilla and Lexilla</a>.</span><span lang="pt-BR">O MacPad é software livre, distribuído sob a GNU General Public License, versão 3 ou posterior. Ele é construído com <a href="https://www.scintilla.org/">Scintilla e Lexilla</a>.</span></p>
+		<p><span lang="en">Mac, iPhone, iPad and iCloud are trademarks of Apple Inc., registered in the U.S. and other countries. MacPad is not affiliated with Apple.</span><span lang="pt-BR">Mac, iPhone, iPad e iCloud são marcas da Apple Inc., registradas nos EUA e em outros países. O MacPad não tem vínculo com a Apple.</span></p>
+	</div>
+</footer>
+
+<script>
+(function () {
+	var titles = {
+		en: 'MacPad — text and code editor for Mac, iPhone and iPad',
+		pt: 'MacPad — editor de texto e código para Mac, iPhone e iPad'
+	};
+	var root = document.documentElement;
+	var buttons = document.querySelectorAll('[data-set-lang]');
+	function show(lang) {
+		root.setAttribute('data-lang', lang);
+		root.lang = lang === 'pt' ? 'pt-BR' : 'en';
+		document.title = titles[lang];
+		for (var i = 0; i < buttons.length; ++i)
+			buttons[i].setAttribute('aria-pressed', String(buttons[i].getAttribute('data-set-lang') === lang));
+	}
+	for (var i = 0; i < buttons.length; ++i) {
+		buttons[i].addEventListener('click', function () {
+			var lang = this.getAttribute('data-set-lang');
+			try { localStorage.setItem('macpad-lang', lang); } catch (e) {}
+			show(lang);
+		});
+	}
+	show(root.getAttribute('data-lang') === 'pt' ? 'pt' : 'en');
+})();
+</script>
+</body>
+</html>

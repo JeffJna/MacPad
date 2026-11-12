@@ -35,7 +35,9 @@ You need Xcode and an Apple ID. A free Apple ID is enough.
 3. Select the **MacPad** project, the **MacPad** target, then **Signing & Capabilities**,
    and choose your team (with a free Apple ID: *Your Name (Personal Team)*).
    If Xcode says the bundle identifier is not available, change it to something of
-   your own, such as `com.yourname.macpad`.
+   your own, such as `com.yourname.macpad`. To keep the team when the project is
+   regenerated (`make ios-project`), put it in `ios/Local.xcconfig` instead, as
+   `ios/Signing.xcconfig` explains.
 4. Connect the iPhone with a cable, choose it at the top of the Xcode window and press
    **Run** (⌘R).
 5. The first time, the iPhone asks you to turn on **Developer Mode** (Settings > Privacy &
@@ -65,6 +67,8 @@ again to renew it. A paid Apple Developer account makes it last a year.
 
 **On the Mac**
 
+- **iCloud Drive:** new documents are kept in iCloud Drive › MacPad and documents in
+  iCloud Drive save themselves, so that the iPhone and iPad have them (see below).
 - Documents open as native window tabs; a dot on the tab marks unsaved changes.
 - **Session:** quitting never asks to save. Every open document, unsaved text included,
   is back at the next launch, and unsaved text is backed up a few seconds after each
@@ -79,6 +83,7 @@ again to renew it. A paid Apple Developer account makes it last a year.
   N times, or until the end of the file.
 - Code folding, bookmarks, change history in the margin, brace matching, highlighting
   of the selected word, Go to Line (`line:column`), Print.
+- Rename… and Move To… for the open file.
 - Settings (⌘,): font and size, line numbers, indent guides, current line highlight,
   vertical edge, word wrap, tab width, spaces or tabs.
 
@@ -95,11 +100,37 @@ again to renew it. A paid Apple Developer account makes it last a year.
   Share and Print.
 - With a hardware keyboard: ⌘F, ⌥⌘F, ⌘L, ⌘/, ⌘D, ⌘S, ⌘= / ⌘-, ⌘W.
 
+## The same documents on the Mac and the iPhone
+
+MacPad uses iCloud Drive for this, which works with a free Apple ID. iCloud Drive needs to
+be on, on the Mac (System Settings > your name > iCloud) and on the iPhone or iPad.
+
+- **On the Mac**, *Sync with iCloud Drive* is on in Settings > General. A new document
+  becomes a file in **iCloud Drive › MacPad** a couple of seconds after you stop typing
+  (`new 1.txt`, `new 2.py`, …; File > Rename… gives it a name). Any document kept in iCloud
+  Drive is saved the same way, and once more when you quit, so there is nothing to save by
+  hand. File > Open from iCloud… (⇧⌘O) shows that folder.
+- **On the iPhone or iPad**, open MacPad, choose **Browse > iCloud Drive > MacPad**, and
+  open the document. MacPad saves by itself there too.
+- A change reaches the other device once iCloud has synced it, usually within seconds to a
+  minute. An open document shows it by itself. On the Mac, if you have unsaved edits as
+  well, MacPad asks which version to keep.
+- If the same document is changed on both devices before iCloud syncs, both versions are
+  kept: the window shows one and the other is saved beside it as `name (device).ext`.
+  When the iPhone can only reach the file itself, its copy goes to On My iPhone › MacPad.
+  MacPad says where the copy went.
+- Files elsewhere on the Mac are saved by hand as usual. To have one on the iPhone, use
+  File > Move To… and choose iCloud Drive › MacPad.
+
+Settings (theme, font, tabs) are kept per device. Handoff and settings shared through
+iCloud would need a paid Apple Developer Program membership, so MacPad does not use them.
+
 ## Keyboard shortcuts on the Mac
 
 | Action | Shortcut |
 |---|---|
 | Settings | ⌘, |
+| Open from iCloud Drive › MacPad | ⇧⌘O |
 | Find / Replace | ⌘F / ⌥⌘F |
 | Find next / previous | ⌘G / ⇧⌘G |
 | Find in Files | ⇧⌘F |
@@ -135,6 +166,8 @@ Sources**.
 - **Find in Files reads from disk.** Unsaved changes are not searched there; use *Find
   All in All Opened Documents* for those.
 - **Macros** (Mac) are kept until you quit. They cannot be named or saved yet.
+- **Trim trailing whitespace** applies when you save by hand, not to the saves iCloud Drive
+  documents make by themselves, which would otherwise eat the space you just typed.
 - **On iOS** the text is edited with plain line breaks; the file's own line ending is
   restored when it is saved. Texts above 2 MB are shown without colours.
 - **Files above 64 MB** open on the Mac as plain text, without the features that scan
@@ -165,6 +198,19 @@ identifier, so your settings and session are untouched. It opens windows for abo
 minute, quits the app with unsaved documents, starts it again to check that they come
 back, and writes `build/test-results/log.txt` plus screenshots. It also checks that
 the highlighter used on iOS colours text byte for byte like Scintilla on the Mac.
+
+### Web page and releases
+
+`docs/index.html` is the project's web page, in English and Portuguese, with the
+screenshots of `docs/screenshots`. GitHub Pages publishes it from the `docs` folder of
+`main` (Settings > Pages > Deploy from a branch > `main` / `/docs`). Its "Download for
+Mac" button points to the latest release, which `.github/workflows/release.yml` makes when
+a version tag is pushed:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
 
 The iOS project is generated from `ios/project.yml` with
 [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`); the
@@ -199,6 +245,7 @@ tools/gen-data.py scite/src
 |---|---|
 | Mac settings | `~/Library/Preferences/dev.macpad.editor.plist` |
 | Mac session and backups of unsaved text | `~/Library/Application Support/dev.macpad.editor/` |
+| Documents shared by the Mac and the iPhone | iCloud Drive › MacPad (`~/Library/Mobile Documents/com~apple~CloudDocs/MacPad` on the Mac) |
 | iOS documents | wherever you keep them in Files; MacPad's own folder is *On My iPhone > MacPad* |
 
 To reset the Mac app, quit it, run `defaults delete dev.macpad.editor` and move the
@@ -208,9 +255,9 @@ Application Support folder above to the Trash.
 
 | Path | Purpose |
 |---|---|
-| `src/` | Mac app (AppKit + Scintilla): windows, menus, documents, Find panel, session, macros |
+| `src/` | Mac app (AppKit + Scintilla): windows, menus, documents, Find panel, session, iCloud Drive, macros |
 | `ios/` | iOS app (UIKit): document browser, editor, settings; `ios/Tests` are its tests |
-| `shared/` | Code of both apps: languages, themes, highlighting without Scintilla, encodings, search, completion, text tools |
+| `shared/` | Code of both apps: languages, themes, highlighting without Scintilla, encodings, search, completion, text tools, versions in conflict |
 | `data/` | Languages, style map and themes |
 | `test/SelfTest.mm` | Self test of the Mac app (`make test`) |
 | `tools/` | Data generator, icon generator, vendor update script |
