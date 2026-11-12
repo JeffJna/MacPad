@@ -7,6 +7,11 @@ options:
   deploymentTarget:
     iOS: "16.0"
   generateEmptyDirectories: false
+# The signing team lives in Signing.xcconfig / Local.xcconfig, so that it survives
+# regenerating the project.
+configFiles:
+  Debug: Signing.xcconfig
+  Release: Signing.xcconfig
 settings:
   base:
     CLANG_CXX_LANGUAGE_STANDARD: c++17
@@ -58,8 +63,6 @@ targets:
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_STYLE: Automatic
-        # Choose your team in Xcode (Signing & Capabilities) to run on your iPhone.
-        DEVELOPMENT_TEAM: ""
   MacPadTests:
     type: bundle.unit-test
     platform: iOS

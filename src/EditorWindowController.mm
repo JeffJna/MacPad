@@ -4,6 +4,7 @@
 
 #import "AppDelegate.h"
 #import "AppSettings.h"
+#import "CloudDocuments.h"
 #import "Document.h"
 #import "EditorStyler.h"
 #import "FindPanel.h"
@@ -384,6 +385,7 @@ FileEncoding EncodingForTag(NSInteger tag)
 			if (doc) {
 				doc.changeSerial += 1;
 				[[SessionManager shared] documentTextDidChange: doc];
+				[[CloudDocuments shared] documentTextDidChange: doc];
 			}
 			break;
 		}
@@ -1495,8 +1497,9 @@ FileEncoding EncodingForTag(NSInteger tag)
 #pragma mark - Window delegate
 
 - (void) windowDidBecomeKey: (NSNotification *) notification {
-	// Look for changes made by other programs when coming back to a file.
+	// Look for changes made by other programs, or on other devices, when coming back to a file.
 	[[self doc] checkForExternalChange];
+	[[self doc] keepVersionsInConflict];
 }
 
 - (void) windowDidBecomeMain: (NSNotification *) notification {

@@ -46,4 +46,25 @@ struct Language;
 // Reloads the file (or asks, when there are unsaved edits) if another program changed it.
 - (void) checkForExternalChange;
 
+// iCloud Drive (see CloudDocuments) -----------------------------------------------------
+
+// Saving, asking about a change made elsewhere, or keeping versions in conflict.
+@property (nonatomic, readonly) BOOL busyWithFile;
+
+// Saves without asking and without trimming spaces. After an error (shown once), only a save
+// by hand tries again.
+- (void) saveAutomaticallyToURL: (NSURL *) url operation: (NSSaveOperationType) operation;
+
+// Saves now, synchronously, while the app quits. Returns NO when it did not.
+- (BOOL) saveBeforeQuitting;
+
+// A file changed on two devices at once: keeps the other versions beside it and says so.
+- (void) keepVersionsInConflict;
+
+// File > Rename… and Move To…, which end in moveFileToURL:. A new extension picks the
+// matching language. A file already at `url` is never replaced.
+- (IBAction) renameFile: (id) sender;
+- (IBAction) moveFile: (id) sender;
+- (void) moveFileToURL: (NSURL *) url;
+
 @end

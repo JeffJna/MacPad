@@ -164,8 +164,26 @@ std::string UTF8WithOffsets(NSString *text, std::vector<uint32_t> &byteOfUnit)
 	_document.saveErrorHandler = ^(NSError *error) {
 		[weakSelf showSaveError: error];
 	};
+	_document.conflictHandler = ^(NSArray<NSURL *> *copies) {
+		[weakSelf showVersionsKept: copies];
+	};
 	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(settingsDidChange:)
 	                                             name: EditorSettingsDidChangeNotification object: nil];
+}
+
+// The file was changed on two devices at once (iCloud Drive): say where the other version went.
+- (void) showVersionsKept: (NSArray<NSURL *> *) copies {
+	NSURL *ownFolder = [[NSFileManager defaultManager] URLsForDirectory: NSDocumentDirectory inDomains: NSUserDomainMask].firstObject;
+	NSMutableArray<NSString *> *places = [NSMutableArray array];
+	for (NSURL *copy in copies) {
+		const BOOL own = [copy.URLByDeletingLastPathComponent.URLByStandardizingPath isEqual: ownFolder.URLByStandardizingPath];
+		[places addObject: [NSString stringWithFormat: own ? @"“%@” in On My iPhone › MacPad" : @"“%@” beside it",
+		                                               copy.lastPathComponent]];
+	}
+	NSString *message = [NSString stringWithFormat: @"This is one version. Nothing was lost: the other was saved as %@.",
+	                                                [places componentsJoinedByString: @", "]];
+	[self showMessage: message title: [NSString stringWithFormat: @"“%@” was changed on two devices at once",
+	                                                              _document.fileURL.lastPathComponent]];
 }
 
 - (void) viewDidAppear: (BOOL) animated {

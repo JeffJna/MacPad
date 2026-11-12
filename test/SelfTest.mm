@@ -8,6 +8,7 @@
 #include <dlfcn.h>
 
 #import "AppSettings.h"
+#import "CloudDocuments.h"
 #import "Document.h"
 #import "EditorWindowController.h"
 #import "FindPanel.h"
@@ -17,6 +18,7 @@
 #import "SearchResultsPanel.h"
 #import "SessionManager.h"
 
+#include "FileConflicts.h"
 #include "Highlighter.h"
 #include "LanguageCatalog.h"
 #include "SearchEngine.h"
@@ -1162,6 +1164,101 @@ static void RunRelaunchTests() {
 	exit(gFails ? 1 : 0);
 }
 
+static std::string FileText(NSString *path) {
+	NSString *text = [NSString stringWithContentsOfFile: path encoding: NSUTF8StringEncoding error: nil];
+	return text ? ToStdString(text) : std::string("<missing>");
+}
+
+// iCloud Drive: a folder of the test stands for iCloud Drive › MacPad.
+static void TestICloudDrive() {
+	// Names of the copies kept for versions in conflict.
+	NSSet<NSString *> *taken = [NSSet setWithArray: @[@"notes.txt", @"notes 2.txt", @"notes (iPhone).txt"]];
+	BOOL (^exists)(NSString *) = ^BOOL(NSString *name) { return [taken containsObject: name]; };
+	CHECK([UniqueFileName(@"todo.txt", exists) isEqualToString: @"todo.txt"], "a free name is kept");
+	CHECK([UniqueFileName(@"notes.txt", exists) isEqualToString: @"notes 3.txt"], "a taken name gets a number (%s)",
+	      UniqueFileName(@"notes.txt", exists).UTF8String);
+	CHECK([ConflictCopyName(@"notes.txt", @"iPhone", exists) isEqualToString: @"notes (iPhone) 2.txt"],
+	      "conflict copy named after the device (%s)", ConflictCopyName(@"notes.txt", @"iPhone", exists).UTF8String);
+	CHECK([ConflictCopyName(@"Makefile", @"Mac/Pro: 2", exists) isEqualToString: @"Makefile (Mac-Pro- 2)"],
+	      "no extension, and no / or : from the device name (%s)", ConflictCopyName(@"Makefile", @"Mac/Pro: 2", exists).UTF8String);
+	CHECK([ConflictCopyName(@"a.txt", nil, exists) isEqualToString: @"a (other device).txt"], "a device without a name");
+
+	NSString *folder = [gOut stringByAppendingPathComponent: @"icloud/MacPad"];
+	[[NSFileManager defaultManager] createDirectoryAtPath: folder withIntermediateDirectories: YES attributes: nil error: nil];
+	CloudDocuments *cloud = [CloudDocuments shared];
+	CHECK(!cloud.active, "iCloud Drive is left alone by the self test until it asks");
+	[AppSettings shared].syncWithICloud = YES;
+	[cloud useFolderForTesting: [NSURL fileURLWithPath: folder isDirectory: YES]];
+	CHECK(cloud.active, "iCloud Drive saving is on");
+
+	// A new document becomes a file in the folder a moment after typing stops.
+	Document *doc = NewDocument();
+	NSString *path = [folder stringByAppendingPathComponent: [NSString stringWithFormat: @"new %ld.txt", (long)doc.untitledNumber]];
+	SetText(doc, "first draft\n");
+	Pump(1.0);
+	CHECK(doc.hasUnsavedChanges && !doc.fileURL, "nothing is saved while typing goes on");
+	Pump(1.8);
+	CHECK([doc.fileURL.path isEqualToString: path], "new document saved in iCloud Drive as %s",
+	      doc.fileURL.lastPathComponent.UTF8String ?: "(nothing)");
+	CHECK(!doc.hasUnsavedChanges && FileText(path) == "first draft\n", "with its text, and shown as saved");
+
+	// Later changes are saved by themselves, trailing spaces included (trimming is for saving by hand).
+	[AppSettings shared].trimTrailingOnSave = YES;
+	SetText(doc, "second draft   \n");
+	Pump(2.8);
+	[AppSettings shared].trimTrailingOnSave = NO;
+	CHECK(FileText(path) == "second draft   \n" && !doc.hasUnsavedChanges, "a change is saved by itself (%s)", FileText(path).c_str());
+
+	// Rename: the file moves, and a new extension picks the language.
+	NSString *renamed = [folder stringByAppendingPathComponent: @"script.py"];
+	[doc moveFileToURL: [NSURL fileURLWithPath: renamed]];
+	Pump(0.5);
+	NSFileManager *files = [NSFileManager defaultManager];
+	CHECK([doc.fileURL.path isEqualToString: renamed] && [files fileExistsAtPath: renamed] && ![files fileExistsAtPath: path],
+	      "Rename moves the file (%s)", doc.fileURL.lastPathComponent.UTF8String);
+	CHECK(doc.language->name == "python", "renaming to .py makes it Python (%s)", doc.language->name.c_str());
+
+	// A name in use is never replaced.
+	NSString *other = [folder stringByAppendingPathComponent: @"other.txt"];
+	[@"other\n" writeToFile: other atomically: YES encoding: NSUTF8StringEncoding error: nil];
+	[doc moveFileToURL: [NSURL fileURLWithPath: other]];
+	Pump(0.5);
+	NSWindow *window = doc.windowForSheet;
+	CHECK(window.attachedSheet != nil, "renaming over another file says why it cannot");
+	if (window.attachedSheet)
+		[window endSheet: window.attachedSheet];
+	Pump(0.2);
+	CHECK([doc.fileURL.path isEqualToString: renamed] && FileText(other) == "other\n", "and leaves both files alone");
+
+	// Quitting saves at once what the pause did not.
+	SetText(doc, "print('last words')\n");
+	[cloud saveDocumentsNow];
+	CHECK(FileText(renamed) == "print('last words')\n" && !doc.hasUnsavedChanges, "quitting saves documents in iCloud Drive first");
+	Pump(2.8);
+
+	// Files elsewhere keep the usual Save.
+	NSString *outside = WriteFile(@"outside-icloud.txt", Utf8("outside\n"));
+	Document *local = Open(outside);
+	SetText(local, "changed\n");
+	Pump(2.8);
+	CHECK(local.hasUnsavedChanges && FileText(outside) == "outside\n", "a file outside iCloud Drive is not saved by itself");
+
+	// Turned off in Settings: new documents stay untitled.
+	[AppSettings shared].syncWithICloud = NO;
+	CHECK(!cloud.active, "the setting turns it off");
+	Document *untitled = NewDocument();
+	SetText(untitled, "stays here\n");
+	Pump(2.8);
+	CHECK(untitled.fileURL == nil && untitled.hasUnsavedChanges, "with Sync off a new document stays untitled");
+
+	Close(untitled);
+	Close(local);
+	Close(doc);
+	[AppSettings shared].syncWithICloud = YES;
+	[cloud useFolderForTesting: nil];
+	CHECK(!cloud.active, "and the test leaves it off");
+}
+
 static void RunTests() {
 	[NSApp activateIgnoringOtherApps: YES];
 	Pump(0.5);
@@ -1181,6 +1278,7 @@ static void RunTests() {
 		TestFindAllAndFindInFiles();
 		TestSettingsAndAppearance();
 		TestDirtyAndReload();
+		TestICloudDrive();
 		TestSession();
 	} @catch (NSException *exception) {
 		gFails++;

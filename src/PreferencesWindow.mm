@@ -5,9 +5,12 @@
 
 #import "AppSettings.h"
 
+#import "CloudDocuments.h"
+
 @implementation PreferencesWindow
 {
 	NSMutableArray<NSControl *> *_controls;
+	NSTextField *_iCloudNote;
 }
 
 + (instancetype) shared {
@@ -157,13 +160,23 @@
 }
 
 - (NSArray<NSArray *> *) generalRows {
+	_iCloudNote = [self note: @""];
 	return @[
 		@[[self label: @"When quitting:"], [self checkbox: @"Remember open documents and unsaved changes" key: @"rememberSession"]],
 		@[[NSNull null], [self note: @"Quitting does not ask to save. Everything, unsaved text included, is back at the next "
 		                             @"launch, and unsaved text is backed up a few seconds after each change."]],
 		@[[self label: @"When saving:"], [self checkbox: @"Trim trailing whitespace" key: @"trimTrailingOnSave"]],
 		@[[self label: @"Selection:"], [self checkbox: @"Highlight other occurrences of the selected word" key: @"smartHighlighting"]],
+		@[[self label: @"iCloud Drive:"], [self checkbox: @"Sync with iCloud Drive" key: @"syncWithICloud"]],
+		@[[NSNull null], _iCloudNote],
 	];
+}
+
+- (NSString *) iCloudExplanation {
+	if (!CloudDocuments.iCloudDriveAvailable)
+		return @"Turn on iCloud Drive in System Settings (your name > iCloud) to use it.";
+	return @"New documents are kept in iCloud Drive › MacPad, and documents in iCloud Drive are saved a few "
+	       @"seconds after each change, so that MacPad on the iPhone and iPad has them.";
 }
 
 - (NSArray<NSArray *> *) editingRows {
@@ -256,7 +269,10 @@
 	for (NSControl *control in _controls) {
 		if ([control.identifier isEqualToString: @"autoCompleteMinChars"])
 			control.enabled = settings.autoComplete;
+		if ([control.identifier isEqualToString: @"syncWithICloud"])
+			control.enabled = CloudDocuments.iCloudDriveAvailable;
 	}
+	_iCloudNote.stringValue = [self iCloudExplanation];
 }
 
 - (IBAction) checkboxChanged: (NSButton *) sender {

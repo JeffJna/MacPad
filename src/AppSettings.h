@@ -46,6 +46,7 @@ extern NSString *const kThemeDefault;   // the light theme, used when no theme i
 
 // General
 @property (nonatomic) BOOL rememberSession; // reopen documents, unsaved text included, at the next launch
+@property (nonatomic) BOOL syncWithICloud;  // new documents in iCloud Drive, saved by themselves (CloudDocuments)
 
 // Appearance
 @property (nonatomic, copy) NSString *themeName;

@@ -2,6 +2,7 @@
 // This file is part of MacPad (GPL v3 or later).
 #import "Application.h"
 
+#import "CloudDocuments.h"
 #import "MacroRecorder.h"
 #import "SessionManager.h"
 
@@ -12,6 +13,8 @@
 
 // Quit menu item, Dock menu, log out and restart all end up here.
 - (void) terminate: (id) sender {
+	// Documents in iCloud Drive are saved first, so that the other devices get the last changes.
+	[[CloudDocuments shared] saveDocumentsNow];
 	SessionManager *session = [SessionManager shared];
 	// With every unsaved document stored in the session there is nothing to ask about:
 	// the documents report themselves as saved and come back at the next launch.

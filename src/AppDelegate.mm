@@ -8,6 +8,8 @@
 #include <vector>
 
 #import "AppSettings.h"
+#import "CloudDocuments.h"
+#import "Document.h"
 #import "PreferencesWindow.h"
 #import "SciUtil.h"
 #import "SearchResultsPanel.h"
@@ -90,6 +92,10 @@ void AddSeparator(NSMenu *menu)
 		[[AppSettings shared] appearanceDidChange];
 }
 
+- (void) applicationDidFinishLaunching: (NSNotification *) notification {
+	[[CloudDocuments shared] start];
+}
+
 // A new empty document, unless the session brought documents back.
 - (BOOL) applicationShouldOpenUntitledFile: (NSApplication *) sender {
 	return [NSDocumentController sharedDocumentController].documents.count == 0;
@@ -164,6 +170,7 @@ void AddSeparator(NSMenu *menu)
 	AddItem(menu, @"Open…", @selector(openDocument:), @"o");
 	_recentMenu = AddSubmenu(menu, @"Open Recent");
 	_recentMenu.delegate = self;
+	AddItem(menu, @"Open from iCloud…", @selector(openFromICloud:), @"o", cmd | shift);
 	AddSeparator(menu);
 	AddItem(menu, @"Close", @selector(performClose:), @"w");
 	AddItem(menu, @"Close All", @selector(closeAllDocuments:), @"w", cmd | option);
@@ -172,6 +179,8 @@ void AddSeparator(NSMenu *menu)
 	AddItem(menu, @"Save a Copy As…", @selector(saveDocumentTo:), @"s", cmd | shift | option);
 	AddItem(menu, @"Save All", @selector(saveAllDocuments:), @"s", cmd | option);
 	AddItem(menu, @"Reload from Disk", @selector(revertDocumentToSaved:));
+	AddItem(menu, @"Rename…", @selector(renameFile:));
+	AddItem(menu, @"Move To…", @selector(moveFile:));
 	AddSeparator(menu);
 	AddItem(menu, @"Reveal in Finder", @selector(revealInFinder:), @"r", cmd | shift);
 	AddItem(menu, @"Open Folder in Terminal", @selector(openFolderInTerminal:));
@@ -534,6 +543,30 @@ void AddSeparator(NSMenu *menu)
 		[[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs: @[url]];
 }
 
+// The Open panel, in iCloud Drive › MacPad (or iCloud Drive, before that folder exists).
+- (IBAction) openFromICloud: (id) sender {
+	NSURL *folder = [CloudDocuments shared].folderURL;
+	if (!folder)
+		return;
+	if (![[NSFileManager defaultManager] fileExistsAtPath: folder.path])
+		folder = folder.URLByDeletingLastPathComponent;
+	NSOpenPanel *panel = [NSOpenPanel openPanel];
+	panel.allowsMultipleSelection = YES;
+	panel.canChooseDirectories = NO;
+	panel.directoryURL = folder;
+	[panel beginWithCompletionHandler: ^(NSModalResponse response) {
+		if (response != NSModalResponseOK)
+			return;
+		for (NSURL *url in panel.URLs) {
+			[[NSDocumentController sharedDocumentController] openDocumentWithContentsOfURL: url display: YES
+			                                                            completionHandler: ^(NSDocument *document, BOOL wasOpen, NSError *error) {
+				if (error)
+					[NSApp presentError: error];
+			}];
+		}
+	}];
+}
+
 #pragma mark - Global options
 
 - (IBAction) toggleWordWrap: (id) sender { [AppSettings shared].wordWrap = ![AppSettings shared].wordWrap; }
@@ -598,6 +631,8 @@ void AddSeparator(NSMenu *menu)
 		return check([item.representedObject isEqualToString: settings.themeName]);
 	if (action == @selector(revealInFinder:))
 		return [NSDocumentController sharedDocumentController].currentDocument.fileURL != nil;
+	if (action == @selector(openFromICloud:))
+		return CloudDocuments.iCloudDriveAvailable;
 	if (action == @selector(saveAllDocuments:)) {
 		for (NSDocument *document in [NSDocumentController sharedDocumentController].documents) {
 			if (document.isDocumentEdited)

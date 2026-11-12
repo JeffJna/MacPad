@@ -4,12 +4,14 @@
 
 #import "Common.h"
 
+#include "FileConflicts.h"
 #include "LanguageCatalog.h"
 
 @implementation TextDocument
 {
 	NSData *_bytes; // the file as last read, for Reopen with Encoding
 	BOOL _loaded;
+	BOOL _keepingVersions;
 }
 
 - (instancetype) initWithFileURL: (NSURL *) url {
@@ -19,8 +21,32 @@
 		_encoding = FileEncoding::Make(FileEncoding::UTF8);
 		_lineEnding = LineEnding::LF;
 		_language = &LanguageCatalog::Shared().NormalText();
+		[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(stateDidChange:)
+		                                             name: UIDocumentStateChangedNotification object: self];
 	}
 	return self;
+}
+
+- (void) dealloc {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+}
+
+// Saved on two devices at once (iCloud Drive): keep this version open and the others beside
+// it, or in On My iPhone › MacPad when Files gave access to this file only.
+- (void) stateDidChange: (NSNotification *) notification {
+	if (!(self.documentState & UIDocumentStateInConflict) || _keepingVersions || !self.fileURL)
+		return;
+	_keepingVersions = YES;
+	NSURL *url = self.fileURL;
+	NSURL *ownFolder = [[NSFileManager defaultManager] URLsForDirectory: NSDocumentDirectory inDomains: NSUserDomainMask].firstObject;
+	dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
+		NSArray<NSURL *> *copies = KeepVersionsInConflict(url, ownFolder);
+		dispatch_async(dispatch_get_main_queue(), ^{
+			self->_keepingVersions = NO;
+			if (copies.count && self.conflictHandler)
+				self.conflictHandler(copies);
+		});
+	});
 }
 
 - (void) acceptBytes: (NSData *) data forcing: (const FileEncoding *) forced {

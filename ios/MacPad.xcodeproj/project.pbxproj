@@ -20,6 +20,7 @@
 		0E22A87F86B17B96A6409F32 /* Accessor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = F938626EFBBEF9FC914E582A /* Accessor.cxx */; settings = {COMPILER_FLAGS = "-w"; }; };
 		0EAB30DD6D68505029461005 /* LexJulia.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B4897C903903586E0E0A5868 /* LexJulia.cxx */; settings = {COMPILER_FLAGS = "-w"; }; };
 		0F06E630C498B4BFDE126362 /* LexHollywood.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 7DD239EFA5ED497F745BF405 /* LexHollywood.cxx */; settings = {COMPILER_FLAGS = "-w"; }; };
+		0F9811D2066D4E2E28885EAC /* FileConflicts.mm in Sources */ = {isa = PBXBuildFile; fileRef = D1F6F103952940E3409F6BD9 /* FileConflicts.mm */; };
 		0FB2B4F3380023641DE56974 /* LexYAML.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 8FF5F69F4A9FCD0BA6FBB0A3 /* LexYAML.cxx */; settings = {COMPILER_FLAGS = "-w"; }; };
 		0FCF58F27FF0B6F8395EEA09 /* LexDMAP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 2EA14A2B67829CFB7843BE24 /* LexDMAP.cxx */; settings = {COMPILER_FLAGS = "-w"; }; };
 		12B2C73C8259D92B735A54CB /* LexTACL.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF8979F691823FC005214B06 /* LexTACL.cxx */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -223,6 +224,7 @@
 		2C2D3CEA70EB38DCD06991EC /* LexMatlab.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexMatlab.cxx; sourceTree = "<group>"; };
 		2D2AC767FF100672313F9239 /* LexSML.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexSML.cxx; sourceTree = "<group>"; };
 		2EA14A2B67829CFB7843BE24 /* LexDMAP.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexDMAP.cxx; sourceTree = "<group>"; };
+		3196F70927B201ECFDFFE63B /* FileConflicts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileConflicts.h; sourceTree = "<group>"; };
 		32321A0449918319FD8AEF89 /* Accessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Accessor.h; sourceTree = "<group>"; };
 		338D1731C1B91B86429A149C /* LexMMIXAL.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexMMIXAL.cxx; sourceTree = "<group>"; };
 		3444AA3E36080B3BB17B3E31 /* LexerBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LexerBase.h; sourceTree = "<group>"; };
@@ -336,6 +338,7 @@
 		CD10F47450CEC12E6FAC2E61 /* LexPOV.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexPOV.cxx; sourceTree = "<group>"; };
 		CFA792FB76FFAE06A6B2C4E3 /* LexCSS.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexCSS.cxx; sourceTree = "<group>"; };
 		CFB0DD5619ECA6F8308B0F9B /* LexRebol.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexRebol.cxx; sourceTree = "<group>"; };
+		D1F6F103952940E3409F6BD9 /* FileConflicts.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FileConflicts.mm; sourceTree = "<group>"; };
 		D21214467F240CF54D28A3FF /* AboutViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AboutViewController.h; sourceTree = "<group>"; };
 		D362A66F532597020B80583E /* LexPascal.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexPascal.cxx; sourceTree = "<group>"; };
 		D417FA70C76631BCAEC80B37 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
@@ -361,6 +364,7 @@
 		E90FC3279A66794A4EF1C951 /* LexDart.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexDart.cxx; sourceTree = "<group>"; };
 		E9B0B9F1D13FE63D037D105B /* LexAbaqus.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexAbaqus.cxx; sourceTree = "<group>"; };
 		EA938D2C67FB6BE84B1CFB18 /* StringCopy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringCopy.h; sourceTree = "<group>"; };
+		EA976E743A67C79CB0D3B5F5 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		EAB1D571F70101A4C90D245E /* LexerModule.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexerModule.cxx; sourceTree = "<group>"; };
 		EB909DDD09ACE7B09774EBE9 /* LexDataflex.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexDataflex.cxx; sourceTree = "<group>"; };
 		EB9EF34D498A1AEF913529D5 /* LexRust.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LexRust.cxx; sourceTree = "<group>"; };
@@ -421,6 +425,7 @@
 			children = (
 				7E535AD1302A63DC2243C0C7 /* themes */,
 				269FF80C389F79A853201AB2 /* data */,
+				30878F4160D055017DC3BDE4 /* ios */,
 				67DD5D7ACBA59A4324FB24DD /* lexers */,
 				CBA5BD058C658936D9FAD770 /* lexlib */,
 				7D7A083EB05AFEE28C971F7C /* macPad */,
@@ -451,6 +456,15 @@
 				B1E6E42D6E234CB252B4D27F /* MacPadTests.mm */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		30878F4160D055017DC3BDE4 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				EA976E743A67C79CB0D3B5F5 /* Signing.xcconfig */,
+			);
+			name = ios;
+			path = .;
 			sourceTree = "<group>";
 		};
 		553880D13AAF7C0687E9AF8F /* Products */ = {
@@ -643,6 +657,8 @@
 			children = (
 				C1272311422C4C1B2FC63744 /* Completion.h */,
 				837ED7D56A1C070D137FDA8D /* Completion.mm */,
+				3196F70927B201ECFDFFE63B /* FileConflicts.h */,
+				D1F6F103952940E3409F6BD9 /* FileConflicts.mm */,
 				48001CFDAD155D6573217527 /* Highlighter.h */,
 				52922088F3324C0F90BACC5F /* Highlighter.mm */,
 				C2132D47BEDBBBB1FBE9F90C /* LanguageCatalog.h */,
@@ -780,6 +796,9 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					8402892E20573D147389E15E = {
+						DevelopmentTeam = "";
+					};
 				};
 			};
 			buildConfigurationList = 22C390970E5610A19DA5EE78 /* Build configuration list for PBXProject "MacPad" */;
@@ -842,6 +861,7 @@
 				76098135F8D4121CB4F4D794 /* EditorSettings.mm in Sources */,
 				83CE7E08C86C9D746B6AE3EA /* EditorTextView.mm in Sources */,
 				D0C88A01E38C675F1E4DAE3D /* EditorViewController.mm in Sources */,
+				0F9811D2066D4E2E28885EAC /* FileConflicts.mm in Sources */,
 				E3F0CD8ED338A4C39022319C /* Highlighter.mm in Sources */,
 				328194B797F32164B8626F10 /* InList.cxx in Sources */,
 				3B6520AEF6E7F800C10D9FC9 /* LanguageCatalog.mm in Sources */,
@@ -1022,7 +1042,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1037,6 +1056,7 @@
 		};
 		4BA097BB5DBBD0D92949171E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EA976E743A67C79CB0D3B5F5 /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1102,6 +1122,7 @@
 		};
 		6B19E6380D5B85B8499CF4B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EA976E743A67C79CB0D3B5F5 /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1178,7 +1199,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -3,3 +3,5 @@ build/
 *.swp
 xcuserdata/
 *.xcresult
+# Signing team of this Mac (see ios/Signing.xcconfig)
+ios/Local.xcconfig

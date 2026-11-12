@@ -1,0 +1,10 @@
+// Signing of the iOS app. Put your team in ios/Local.xcconfig (git does not track it):
+//
+//     DEVELOPMENT_TEAM = ABCDE12345
+//
+// Your team ID is in Xcode > Settings > Accounts; a free Apple ID has one too. Choosing the
+// team in Xcode (Signing & Capabilities) works as well, until the project is regenerated.
+
+DEVELOPMENT_TEAM =
+
+#include? "Local.xcconfig"

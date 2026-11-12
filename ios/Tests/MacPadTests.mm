@@ -8,6 +8,7 @@
 #import "EditorViewController.h"
 #import "TextDocument.h"
 
+#include "FileConflicts.h"
 #include "Highlighter.h"
 #include "LanguageCatalog.h"
 #include "SciLexer.h"
@@ -131,6 +132,19 @@
 	XCTAssertTrue(FormatJSON("{\"a\":[1,2]}", false, "  ", "\n", formatted, message));
 	XCTAssertEqual(formatted, std::string("{\n  \"a\": [\n    1,\n    2\n  ]\n}"));
 	XCTAssertEqual(HashHex("abc", HashAlgorithm::SHA256), std::string("ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"));
+}
+
+// Names of the copies kept when a file was changed on two devices at once.
+- (void) testConflictCopyNames {
+	NSSet<NSString *> *taken = [NSSet setWithArray: @[@"notes.txt", @"notes (Mac).txt"]];
+	BOOL (^exists)(NSString *) = ^BOOL(NSString *name) { return [taken containsObject: name]; };
+	XCTAssertEqualObjects(ConflictCopyName(@"todo.md", @"Mac", exists), @"todo (Mac).md");
+	XCTAssertEqualObjects(ConflictCopyName(@"notes.txt", @"Mac", exists), @"notes (Mac) 2.txt");
+	XCTAssertEqualObjects(ConflictCopyName(@"Makefile", @"iPad", exists), @"Makefile (iPad)");
+	XCTAssertEqualObjects(UniqueFileName(@"notes.txt", exists), @"notes 2.txt");
+	// Nothing in conflict: nothing to copy.
+	NSURL *url = [self writeFile: @"calm.txt" bytes: [@"calm" dataUsingEncoding: NSUTF8StringEncoding]];
+	XCTAssertEqual(KeepVersionsInConflict(url, nil).count, 0u);
 }
 
 #pragma mark - Editor

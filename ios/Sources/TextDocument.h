@@ -24,6 +24,10 @@ struct Language;
 // Called on the main queue when saving fails (for example a character the encoding cannot store).
 @property (nonatomic, copy) void (^saveErrorHandler)(NSError *error);
 
+// Called on the main queue when the file had been changed on two devices at once: the
+// document keeps one version, and every other is saved beside it in the files given.
+@property (nonatomic, copy) void (^conflictHandler)(NSArray<NSURL *> *copies);
+
 // The text changed in the editor: remember it and schedule an automatic save.
 - (void) textDidChange: (NSString *) text;
 

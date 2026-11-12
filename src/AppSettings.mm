@@ -62,6 +62,7 @@ static NSString *const kDarkTheme = @"Dark";
 			@"autoCompleteMinChars": @3,
 			@"trimTrailingOnSave": @NO,
 			@"rememberSession": @YES,
+			@"syncWithICloud": @YES,
 			@"themeName": kThemeAutomatic,
 			@"fontName": @"",
 			@"fontSize": @0,
@@ -95,6 +96,7 @@ BOOL_SETTING(autoCloseQuotes, AutoCloseQuotes)
 BOOL_SETTING(autoComplete, AutoComplete)
 BOOL_SETTING(trimTrailingOnSave, TrimTrailingOnSave)
 BOOL_SETTING(rememberSession, RememberSession)
+BOOL_SETTING(syncWithICloud, SyncWithICloud)
 
 INTEGER_SETTING(edgeColumn, EdgeColumn, 0, 1000)
 INTEGER_SETTING(zoom, Zoom, -10, 60)
