@@ -23,7 +23,7 @@ MIN_MACOS   ?= 11.0
 # Code signing identity. "-" signs ad hoc; use "Developer ID Application: ..." to distribute.
 SIGN_ID     ?= -
 # Web page of the project, shown in the Help menu when set (for example the GitHub repository).
-HOMEPAGE    ?=
+HOMEPAGE    ?= https://jeffjna.github.io/MacPad/
 
 # Scintilla and Lexilla, unchanged (see vendor/README.md).
 SCI := vendor/scintilla
