@@ -1,0 +1,113 @@
+{
+ "name": "High Contrast Dark",
+ "dark": true,
+ "editor": {
+  "background": "#000000",
+  "foreground": "#FFFFFF",
+  "caret": "#FFFFFF",
+  "caretLine": "#1A1A1A",
+  "selection": "#264F78",
+  "multiSelection": "#2C3A55",
+  "multiCaret": "#A9AFBB",
+  "lineNumber": "#A0A0A0",
+  "gutter": "#000000",
+  "foldMarker": "#6B717C",
+  "foldActive": "#5A9CFF",
+  "indentGuide": "#404040",
+  "whitespace": "#707070",
+  "edge": "#2E3138",
+  "braceMatch": "#FFFFFF",
+  "braceMatchBackground": "#2F5D3A",
+  "braceBad": "#FF6B6B",
+  "smartHighlight": "#8A7428",
+  "markAll": "#2F6AA8",
+  "bookmark": "#5A9CFF",
+  "changeModified": "#D9922E",
+  "changeSaved": "#3F9E5A",
+  "changeRevertedModified": "#5FA88A",
+  "changeRevertedOrigin": "#6F88B8"
+ },
+ "styles": {
+  "comment": {
+   "color": "#7CFC00",
+   "italic": true
+  },
+  "commentDoc": {
+   "color": "#7CFC00",
+   "italic": true
+  },
+  "commentDocKeyword": {
+   "color": "#7CFC00",
+   "bold": true,
+   "italic": true
+  },
+  "keyword": {
+   "color": "#569CFF",
+   "bold": true
+  },
+  "keyword2": {
+   "color": "#E0A0FF"
+  },
+  "type": {
+   "color": "#4EE6E6"
+  },
+  "function": {
+   "color": "#FFFF80"
+  },
+  "string": {
+   "color": "#FFB070"
+  },
+  "stringSpecial": {
+   "color": "#FFD0A0"
+  },
+  "regex": {
+   "color": "#FFD0A0"
+  },
+  "number": {
+   "color": "#B5F0B5"
+  },
+  "operator": {
+   "color": "#FFFFFF"
+  },
+  "preprocessor": {
+   "color": "#FF80C0"
+  },
+  "tag": {
+   "color": "#569CFF"
+  },
+  "attribute": {
+   "color": "#FFFF80"
+  },
+  "label": {
+   "color": "#E0A0FF"
+  },
+  "variable": {
+   "color": "#E0A0FF"
+  },
+  "heading": {
+   "color": "#569CFF",
+   "bold": true
+  },
+  "emphasis": {
+   "color": "#FFFFFF",
+   "italic": true
+  },
+  "link": {
+   "color": "#80C0FF",
+   "underline": true
+  },
+  "added": {
+   "color": "#FFB070"
+  },
+  "deleted": {
+   "color": "#FF5050"
+  },
+  "changed": {
+   "color": "#B5F0B5"
+  },
+  "error": {
+   "color": "#FF5050",
+   "underline": true
+  }
+ }
+}

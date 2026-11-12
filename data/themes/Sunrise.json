@@ -1,0 +1,113 @@
+{
+ "name": "Sunrise",
+ "dark": false,
+ "editor": {
+  "background": "#FFFDF8",
+  "foreground": "#2A2A33",
+  "caret": "#1E1E22",
+  "caretLine": "#FFF4E0",
+  "selection": "#FFDDB0",
+  "multiSelection": "#FFE9CC",
+  "multiCaret": "#5A5F69",
+  "lineNumber": "#A8A29A",
+  "gutter": "#FFF8EC",
+  "foldMarker": "#A0A6B0",
+  "foldActive": "#3D7BF7",
+  "indentGuide": "#DADDE3",
+  "whitespace": "#C3C8D0",
+  "edge": "#E3E6EB",
+  "braceMatch": "#1E1E22",
+  "braceMatchBackground": "#C9E7C9",
+  "braceBad": "#D11F1F",
+  "smartHighlight": "#FFD84D",
+  "markAll": "#59A8FF",
+  "bookmark": "#3D7BF7",
+  "changeModified": "#F0A33A",
+  "changeSaved": "#3DAA5C",
+  "changeRevertedModified": "#7FC7A8",
+  "changeRevertedOrigin": "#8FA8D8"
+ },
+ "styles": {
+  "comment": {
+   "color": "#8C8C99",
+   "italic": true
+  },
+  "commentDoc": {
+   "color": "#8C8C99",
+   "italic": true
+  },
+  "commentDocKeyword": {
+   "color": "#8C8C99",
+   "bold": true,
+   "italic": true
+  },
+  "keyword": {
+   "color": "#D9480F",
+   "bold": true
+  },
+  "keyword2": {
+   "color": "#AE3EC9"
+  },
+  "type": {
+   "color": "#1C7ED6"
+  },
+  "function": {
+   "color": "#5F3DC4"
+  },
+  "string": {
+   "color": "#2B8A3E"
+  },
+  "stringSpecial": {
+   "color": "#0B7285"
+  },
+  "regex": {
+   "color": "#0B7285"
+  },
+  "number": {
+   "color": "#E67700"
+  },
+  "operator": {
+   "color": "#495057"
+  },
+  "preprocessor": {
+   "color": "#C2255C"
+  },
+  "tag": {
+   "color": "#1C7ED6"
+  },
+  "attribute": {
+   "color": "#D9480F"
+  },
+  "label": {
+   "color": "#AE3EC9"
+  },
+  "variable": {
+   "color": "#AE3EC9"
+  },
+  "heading": {
+   "color": "#D9480F",
+   "bold": true
+  },
+  "emphasis": {
+   "color": "#2A2A33",
+   "italic": true
+  },
+  "link": {
+   "color": "#1971C2",
+   "underline": true
+  },
+  "added": {
+   "color": "#2B8A3E"
+  },
+  "deleted": {
+   "color": "#E03131"
+  },
+  "changed": {
+   "color": "#E67700"
+  },
+  "error": {
+   "color": "#E03131",
+   "underline": true
+  }
+ }
+}

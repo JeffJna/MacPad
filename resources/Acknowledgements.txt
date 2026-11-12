@@ -1,0 +1,36 @@
+MacPad – Acknowledgements
+
+MacPad is free software, released under the GNU General Public License,
+version 3 or later. It comes with ABSOLUTELY NO WARRANTY.
+
+MacPad is built with the open-source components below. Their notices are
+also in the vendor/ directory of the MacPad source code.
+
+
+Scintilla, Lexilla and SciTE
+----------------------------
+Scintilla is the editing component of the Mac app. Lexilla colours the
+text on the Mac and on iOS. The keyword lists of the language definitions
+come from SciTE.
+https://www.scintilla.org/
+
+License for Lexilla, Scintilla, and SciTE
+
+Copyright 1998-2021 by Neil Hodgson <neilh@scintilla.org>
+
+All Rights Reserved
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation.
+
+NEIL HODGSON DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS, IN NO EVENT SHALL NEIL HODGSON BE LIABLE FOR ANY
+SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
+OR PERFORMANCE OF THIS SOFTWARE.

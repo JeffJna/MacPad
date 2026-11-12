@@ -1,0 +1,113 @@
+{
+ "name": "High Contrast Light",
+ "dark": false,
+ "editor": {
+  "background": "#FFFFFF",
+  "foreground": "#000000",
+  "caret": "#000000",
+  "caretLine": "#EDEDED",
+  "selection": "#99C2FF",
+  "multiSelection": "#D3E3FB",
+  "multiCaret": "#5A5F69",
+  "lineNumber": "#505050",
+  "gutter": "#F7F8FA",
+  "foldMarker": "#A0A6B0",
+  "foldActive": "#3D7BF7",
+  "indentGuide": "#B0B0B0",
+  "whitespace": "#909090",
+  "edge": "#E3E6EB",
+  "braceMatch": "#1E1E22",
+  "braceMatchBackground": "#C9E7C9",
+  "braceBad": "#D11F1F",
+  "smartHighlight": "#FFD84D",
+  "markAll": "#59A8FF",
+  "bookmark": "#3D7BF7",
+  "changeModified": "#F0A33A",
+  "changeSaved": "#3DAA5C",
+  "changeRevertedModified": "#7FC7A8",
+  "changeRevertedOrigin": "#8FA8D8"
+ },
+ "styles": {
+  "comment": {
+   "color": "#006400",
+   "italic": true
+  },
+  "commentDoc": {
+   "color": "#006400",
+   "italic": true
+  },
+  "commentDocKeyword": {
+   "color": "#006400",
+   "bold": true,
+   "italic": true
+  },
+  "keyword": {
+   "color": "#0000CC",
+   "bold": true
+  },
+  "keyword2": {
+   "color": "#6600CC"
+  },
+  "type": {
+   "color": "#005A5A"
+  },
+  "function": {
+   "color": "#000080"
+  },
+  "string": {
+   "color": "#A31515"
+  },
+  "stringSpecial": {
+   "color": "#8B0000"
+  },
+  "regex": {
+   "color": "#8B0000"
+  },
+  "number": {
+   "color": "#800000"
+  },
+  "operator": {
+   "color": "#000000"
+  },
+  "preprocessor": {
+   "color": "#7F3F00"
+  },
+  "tag": {
+   "color": "#0000CC"
+  },
+  "attribute": {
+   "color": "#7F3F00"
+  },
+  "label": {
+   "color": "#6600CC"
+  },
+  "variable": {
+   "color": "#6600CC"
+  },
+  "heading": {
+   "color": "#0000CC",
+   "bold": true
+  },
+  "emphasis": {
+   "color": "#000000",
+   "italic": true
+  },
+  "link": {
+   "color": "#0000EE",
+   "underline": true
+  },
+  "added": {
+   "color": "#A31515"
+  },
+  "deleted": {
+   "color": "#E00000"
+  },
+  "changed": {
+   "color": "#800000"
+  },
+  "error": {
+   "color": "#E00000",
+   "underline": true
+  }
+ }
+}

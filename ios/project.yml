@@ -1,0 +1,85 @@
+# Xcode project of the iOS app, generated with XcodeGen (`make ios-project`).
+# The app shares shared/ (languages, themes, highlighting, encodings, tools) with the Mac app
+# and colours text with Lexilla from vendor/.
+name: MacPad
+options:
+  bundleIdPrefix: dev.macpad
+  deploymentTarget:
+    iOS: "16.0"
+  generateEmptyDirectories: false
+settings:
+  base:
+    CLANG_CXX_LANGUAGE_STANDARD: c++17
+    CLANG_ENABLE_OBJC_ARC: YES
+    MARKETING_VERSION: 0.2.0
+    CURRENT_PROJECT_VERSION: 1
+    HEADER_SEARCH_PATHS:
+      - $(SRCROOT)/Sources
+      - $(SRCROOT)/../shared
+      - $(SRCROOT)/../vendor/scintilla/include
+      - $(SRCROOT)/../vendor/lexilla/include
+      - $(SRCROOT)/../vendor/lexilla/lexlib
+targets:
+  MacPad:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: Resources/Assets.xcassets
+      - path: ../shared
+      - path: ../vendor/lexilla/lexlib
+        compilerFlags: -w
+      - path: ../vendor/lexilla/lexers
+        compilerFlags: -w
+      - path: ../vendor/lexilla/src/Lexilla.cxx
+        compilerFlags: -w -DLEXILLA_NO_EXPORT
+      - path: ../data/languages.json
+        buildPhase: resources
+      - path: ../data/stylemap.json
+        buildPhase: resources
+      - path: ../data/themes
+        type: folder
+        buildPhase: resources
+      - path: ../resources/Acknowledgements.txt
+        buildPhase: resources
+      - path: ../LICENSE
+        buildPhase: resources
+    dependencies:
+      # Objective-C++ does not link frameworks automatically.
+      - sdk: UIKit.framework
+      - sdk: Foundation.framework
+      - sdk: CoreGraphics.framework
+      - sdk: UniformTypeIdentifiers.framework
+    settings:
+      base:
+        PRODUCT_NAME: MacPad
+        PRODUCT_BUNDLE_IDENTIFIER: dev.macpad.editor
+        INFOPLIST_FILE: Info.plist
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Automatic
+        # Choose your team in Xcode (Signing & Capabilities) to run on your iPhone.
+        DEVELOPMENT_TEAM: ""
+  MacPadTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: MacPad
+      - sdk: XCTest.framework
+      - sdk: UIKit.framework
+      - sdk: Foundation.framework
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.macpad.editor.tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  MacPad:
+    build:
+      targets:
+        MacPad: all
+        MacPadTests: [test]
+    test:
+      targets:
+        - MacPadTests

@@ -1,0 +1,113 @@
+{
+ "name": "Paper",
+ "dark": false,
+ "editor": {
+  "background": "#FBF7EF",
+  "foreground": "#3B3226",
+  "caret": "#3B3226",
+  "caretLine": "#F3ECDD",
+  "selection": "#E6D5B3",
+  "multiSelection": "#EFE3CA",
+  "multiCaret": "#5A5F69",
+  "lineNumber": "#A89A80",
+  "gutter": "#F5EFE2",
+  "foldMarker": "#A0A6B0",
+  "foldActive": "#3D7BF7",
+  "indentGuide": "#E5DCC8",
+  "whitespace": "#C3C8D0",
+  "edge": "#EAE1CE",
+  "braceMatch": "#1E1E22",
+  "braceMatchBackground": "#C9E7C9",
+  "braceBad": "#D11F1F",
+  "smartHighlight": "#F2C94C",
+  "markAll": "#8FB8DE",
+  "bookmark": "#3D7BF7",
+  "changeModified": "#F0A33A",
+  "changeSaved": "#3DAA5C",
+  "changeRevertedModified": "#7FC7A8",
+  "changeRevertedOrigin": "#8FA8D8"
+ },
+ "styles": {
+  "comment": {
+   "color": "#9A8A6E",
+   "italic": true
+  },
+  "commentDoc": {
+   "color": "#9A8A6E",
+   "italic": true
+  },
+  "commentDocKeyword": {
+   "color": "#9A8A6E",
+   "bold": true,
+   "italic": true
+  },
+  "keyword": {
+   "color": "#8F3F2B",
+   "bold": true
+  },
+  "keyword2": {
+   "color": "#7A4E8F"
+  },
+  "type": {
+   "color": "#2F6B6B"
+  },
+  "function": {
+   "color": "#4A5C9E"
+  },
+  "string": {
+   "color": "#5A7A2E"
+  },
+  "stringSpecial": {
+   "color": "#2F7A6B"
+  },
+  "regex": {
+   "color": "#2F7A6B"
+  },
+  "number": {
+   "color": "#A0522D"
+  },
+  "operator": {
+   "color": "#6B5E4B"
+  },
+  "preprocessor": {
+   "color": "#8A6D1F"
+  },
+  "tag": {
+   "color": "#8F3F2B"
+  },
+  "attribute": {
+   "color": "#7A5A1F"
+  },
+  "label": {
+   "color": "#7A4E8F"
+  },
+  "variable": {
+   "color": "#6B4E8F"
+  },
+  "heading": {
+   "color": "#8F3F2B",
+   "bold": true
+  },
+  "emphasis": {
+   "color": "#3B3226",
+   "italic": true
+  },
+  "link": {
+   "color": "#2F5C8F",
+   "underline": true
+  },
+  "added": {
+   "color": "#5A7A2E"
+  },
+  "deleted": {
+   "color": "#B03A2E"
+  },
+  "changed": {
+   "color": "#A0522D"
+  },
+  "error": {
+   "color": "#B03A2E",
+   "underline": true
+  }
+ }
+}

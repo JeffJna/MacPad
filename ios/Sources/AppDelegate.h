@@ -1,0 +1,8 @@
+// Application delegate: loads the languages, the style map and the settings.
+// This file is part of MacPad (GPL v3 or later).
+#pragma once
+
+#import <UIKit/UIKit.h>
+
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@end

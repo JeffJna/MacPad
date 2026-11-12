@@ -1,0 +1,35 @@
+# Builds the Mac app (universal, with its disk image) and the iOS app for the simulator.
+# The self tests drive real windows and simulators, so they run on a developer's Mac.
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app and disk image
+        run: make dist
+      - name: Check the app bundle
+        run: |
+          lipo -archs build/MacPad.app/Contents/MacOS/MacPad
+          codesign --verify --deep --strict build/MacPad.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MacPad
+          path: |
+            build/MacPad-*.dmg
+            build/MacPad-*.zip
+          if-no-files-found: error
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the iOS app for the simulator
+        run: make ios
